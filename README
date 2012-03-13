@@ -1,1 +1,1 @@
-This file was created by IntelliJ IDEA (Nika.1) IU-116.32 for binding GitHub repository
+Small application developed with Groovy and Gaelyk, to accept GitHub "post receive" web hooks, to be notified on pushes to a given GitHub hosted project, and send a nice HTML email with commit diffs to some email address of your choice.
