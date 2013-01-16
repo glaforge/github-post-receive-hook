@@ -34,6 +34,10 @@ def commits = summary.commits.collect { commit ->
 
 log.info "Each commit parsed"
 
+String linkGroovyIssues(String msg) {    
+    msg.replaceAll(/(GROOVY-\d{1,4})/, '<a href="http://jira.codehaus.org/browse/$1">$1</a>')
+}
+
 def subject = "${ownerName}/${repoName}: ${summary.commits.size()} commit${summary.commits.size() > 1 ? 's' : ''} on ${summary.ref}"
 
 def styles = [
@@ -67,8 +71,10 @@ new MarkupBuilder(stringWriter).html {
             ul {
                 commits.each { details ->
                     li {
-                        a href: summary.repository.url + '/commit/' + details.sha, details.sha
-                        span details.commit.message
+                        b { a href: summary.repository.url + '/commit/' + details.sha, details.sha }
+                        p {
+                            mkp.yieldUnescaped linkGroovyIssues(details.commit.message)
+                        }
                     }
                 }
             }
@@ -83,7 +89,9 @@ new MarkupBuilder(stringWriter).html {
                     }
 
                     dt { strong "Message:" }
-                    dd details.commit.message
+                    dd {
+                        mkp.yieldUnescaped linkGroovyIssues(details.commit.message)
+                    }
 
                     dt { strong "Author:" }
                     dd {
@@ -127,7 +135,12 @@ new MarkupBuilder(stringWriter).html {
 log.info "HTML generated"
 
 mail.send from: "git@${app.id}.appspotmail.com",
-    to: 'dummy@acme.com',
+    to: [
+        'glaforge@gmail.com', 
+        'paulk@asert.com.au', 
+        'blackdrag@gmx.org', 
+        'cedric.champeau@gmail.com'
+    ],
     htmlBody: stringWriter.toString(),
     subject: subject
 
